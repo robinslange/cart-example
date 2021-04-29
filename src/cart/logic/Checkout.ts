@@ -6,8 +6,11 @@ export class Checkout {
     scannedProducts : {
         id: string,
         amount: number
+        price: number
+        discount: number
     }[] = [];
     rules = [] as Rule[];
+    appliedRules = [] as any[];
 
     constructor(pricingRules : pricingRules) {
         pricingRules.products.forEach(p => this.products.push(p));
@@ -16,10 +19,20 @@ export class Checkout {
         })
     }
 
+    public get scanned(): any[]{
+        return this.scannedProducts;
+    }
+
+    public get usedRules(): any[]{
+        return this.appliedRules
+    }
+
     scan(productID : string): void {
         const payload = {
             id: productID,
-            amount: 1
+            amount: 1,
+            price: 0,
+            discount: 0,
         };
         if (this.scannedProducts.some(p => p.id === productID)) {
             this.scannedProducts.forEach(p => {
@@ -44,9 +57,12 @@ export class Checkout {
                     // i used objects with a JSON data structure to allow for easy remote storage of rules
                     // and and easy way to add new rules, if you want to add a new kind of comparison you could do this also
                     const itemCost = processor.apply(product, scanned.amount); // apply rule logic
-                    total += itemCost;
+                    scanned.price = itemCost.cost;
+                    scanned.discount = itemCost.discount;
+                    total += scanned.price;
                 } else {
-                    total += product.price * scanned.amount;
+                    scanned.price = product.price * scanned.amount
+                    total += scanned.price;
                 }
             } else {
                 throw new Error("Product not listed.")

@@ -10,6 +10,20 @@
             and what kind of code I can write so I kept this very simple just to demonstrate functionality. I hope you don't mind :)
           !-->
           <v-card-title>Checkout</v-card-title>
+          <div v-if="this.co.scannedProducts.length > 0">
+          <v-row >
+            <v-col>Item:</v-col>
+            <v-col>Quantity:</v-col>
+            <v-col>Price:</v-col>
+            <v-col>Discount:</v-col>
+          </v-row>
+          <v-row v-for="(item, i) in this.co.scannedProducts" :key="i">
+            <v-col>{{ item.id }}</v-col>
+            <v-col>{{ item.amount }}</v-col>
+            <v-col>${{ item.price }}</v-col>
+            <v-col>${{ item.discount }}</v-col>
+          </v-row>
+          </div>
           <v-btn @click="scan('MUG')">Scan Mug</v-btn>
           <v-btn @click="scan('TSHIRT')">Scan T-Shirt</v-btn>
           <v-btn @click="scan('CAP')">Scan Cap</v-btn>
